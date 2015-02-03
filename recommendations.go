@@ -26,10 +26,18 @@ package main
 import (
 	"log"
 	"math"
+	"sort"
 )
 
 type Movies map[string]float64
 type Persons map[string]Movies
+
+type sim_algorithm func(Persons,string,string) float64
+
+type Score struct{
+	Point float64
+	Name string
+}
 
 func Initialize() Persons {
 	dataset := make(Persons)
@@ -111,28 +119,105 @@ func sim_distance(p Persons, p1 string, p2 string) float64 {
 	for key, _ := range p[p1] {
 		_, ok := p[p2][key]
 		if ok {
-			result = result + math.Pow(p[p1][key]-p[p2][key],2)
+			result = result + math.Pow(p[p1][key]-p[p2][key], 2)
 		}
 	}
-	
-	result = 1 /(1+ result)
-	
-	log.Println(result)
+
+	result = 1 / (1 + result)
 
 	return result
+}
+
+func sim_pearson(p Persons, p1 string, p2 string) float64 {
+	result := 0.0
+
+	_, ok := p[p1]
+	if ok != true {
+		log.Println(p1 + " is not existing in the dataset.")
+		return 0.0
+	}
+	_, ok = p[p2]
+	if ok != true {
+		log.Println(p2 + " is not existing in the dataset.")
+		return 0.0
+	}
+	sum1 := 0.0
+	sum2 := 0.0
+	sum1Sq := 0.0
+	sum2Sq := 0.0
+	pSum := 0.0
+	n := 0.0
+	for key, _ := range p[p1] {
+		_, ok := p[p2][key]
+		if ok {
+			sum1 = sum1 + p[p1][key]
+			sum2 = sum2 + p[p2][key]
+			
+			sum1Sq = sum1Sq + math.Pow(p[p1][key],2)
+			sum2Sq = sum2Sq + math.Pow(p[p2][key],2)
+			
+			pSum = pSum + p[p1][key]*p[p2][key]
+			
+			n = n+1
+		}
+	}
+	if n == 0 {
+		return 0.0
+	}
+	
+	num := pSum - (sum1*sum2/n)
+	den := math.Sqrt((sum1Sq-math.Pow(sum1,2)/n)*(sum2Sq-math.Pow(sum2,2)/n))
+	if den == 0 {
+		return 0.0
+	}
+	
+	result = num/den
+
+	return result
+}
+
+func reverseMap(m map[float64]string)[]Score{
+	var result []Score
+	var keys []float64
+	for k := range m{
+		keys = append(keys,k)
+	}
+	log.Println(keys)
+	sort.Sort(sort.Reverse(sort.Float64Slice(keys)))
+	log.Println(keys)
+	for _,k := range keys{
+		var s Score
+		s.Name = m[k]
+		s.Point = k
+		result = append(result,s)
+	}
+	log.Println(result)
+	return result
+}
+
+func topMatches(p Persons, name string, n int, f sim_algorithm)[]Score{
+	result := make([]Score,len(p))
+	sim := make(map[float64]string)
+	for key,_:=range p{
+		if key != name{
+			dis := f(p, name, key)
+			sim[dis] = key
+		}
+	}
+	result = reverseMap(sim)
+	
+	return result[:n]
 }
 
 func main() {
 
 	d := Initialize()
 
-	sim_distance(d, "test", "Jack Matthews")
-	sim_distance(d, "Lisa Rose", "Gene Seymour")
-
-	a := math.Sqrt(math.Pow(5-4, 2) + math.Pow(4-1, 2))
-	log.Println(a)
-
-	b := 1 / (1 + math.Sqrt(math.Pow(5-4, 2)+math.Pow(4-1, 2)))
-	log.Println(b)
+//	log.Println(sim_distance(d, "test", "Jack Matthews"))
+	log.Println(sim_distance(d, "Lisa Rose", "Gene Seymour"))
+	log.Println(sim_pearson(d, "Lisa Rose", "Gene Seymour"))
+	log.Println(sim_pearson(d, "Toby", "Claudia Puig"))
+	
+	log.Println(topMatches(d, "Toby", 3, sim_pearson))
 
 }
