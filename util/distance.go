@@ -275,7 +275,7 @@ func CalculateSimilarItems(p Dataset, n int) map[string][]Score {
 	return result
 }
 
-func GetRecommendationItems(p Dataset, sim map[string][]Score, name string) {
+func GetRecommendationItems(p Dataset, sim map[string][]Score, name string) []Score{
 	userRatings := p[name]
 
 	scores := make(map[string]float64)
@@ -298,4 +298,6 @@ func GetRecommendationItems(p Dataset, sim map[string][]Score, name string) {
 	result := reverseMap1(rankings)
 
 	log.Println(result)
+	
+	return result
 }

@@ -29,7 +29,15 @@ func TestdefaultDataset() {
 }
 
 func TestMovieLens() {
-	util.LoadMovieLens()
+
+	title := util.LoadMovieTitles()
+	d := util.LoadMovieData(title)
+	//	log.Println(d["87"])
+//	log.Println(util.GetRecommendations(d, "87", util.Sim_pearson)[:30])
+
+	itemsim := util.CalculateSimilarItems(d, 50)
+
+	log.Println(util.GetRecommendationItems(d, itemsim, "87")[:30])
 
 }
 

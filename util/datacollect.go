@@ -9,7 +9,7 @@ import (
 
 )
 
-type MovieTitle map[int]string
+type MovieTitle map[string]string
 
 func GetFullPath(filename string)string{
 	pwd,err := os.Getwd()
@@ -35,21 +35,43 @@ func LoadMovieTitles()MovieTitle{
 	r.Split(bufio.ScanLines)
 	for r.Scan(){
 		s := strings.Split(r.Text(), "|")[:2]
-		index, err := strconv.Atoi(s[0])
-		if err != nil{
-			log.Println(err.Error())
-		}else{
-			result[index] = s[1] 
-		}
+		result[s[0]] = s[1] 
 	}
-	log.Println(len(result))
+//	log.Println(len(result))
 	return result
 }
 
-func LoadMovieLens(){
+func LoadMovieData(movie MovieTitle)Dataset{
+	result := make(Dataset)
 	
-	title := LoadMovieTitles()
-	log.Println(title)
+	datafile := GetFullPath("u.data")
+	f,err := os.Open(datafile)
+	if err != nil{
+		log.Fatal(err)
+	}
+	defer f.Close()
 	
+	r := bufio.NewScanner(f)
+	r.Split(bufio.ScanLines)
+	for r.Scan(){
+		s := strings.Split(r.Text(), "\t")
+//		log.Println(s)
+		userid := s[0]
+		movieid := s[1]
+		rating := s[2]
+		val, err := strconv.ParseFloat(rating,64)
+		if err != nil{
+			log.Println(err.Error())
+		}
+		item,ok := result[userid]
+		if ok != true{
+			item = make(Items)
+		}
+		item[movie[movieid]] = val
+		result[userid] = item 
+	}
+	return result
 }
+
+
 
