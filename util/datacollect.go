@@ -9,6 +9,15 @@ import (
 
 )
 
+type Schedule struct {
+	Origin string
+	Dest string
+	Depart string
+	Arrive string
+	price int
+	
+}
+
 type MovieTitle map[string]string
 
 func GetFullPath(filename string)string{
@@ -17,6 +26,15 @@ func GetFullPath(filename string)string{
 		log.Fatal(err)
 	}
 	result := pwd + "\\data\\movielens\\" + filename
+	return result
+}
+
+func GetScheduleFilepath()string{
+	pwd,err := os.Getwd()
+	if err != nil{
+		log.Fatal(err)
+	}
+	result := pwd + "\\data\\flight\\schedule.txt"
 	return result
 }
 
@@ -72,6 +90,34 @@ func LoadMovieData(movie MovieTitle)Dataset{
 	}
 	return result
 }
+
+func LoadScheduleData()[]Schedule{
+	datafile := GetScheduleFilepath()
+	f,err := os.Open(datafile)
+	if err != nil{
+		log.Fatal(err)
+	}
+	defer f.Close()
+	
+	var result []Schedule
+	r := bufio.NewScanner(f)
+	r.Split(bufio.ScanLines)
+	for r.Scan(){
+		line := strings.Split(r.Text(), ",")
+//		log.Println(s)
+		var s Schedule
+		s.Origin = line[0]
+		s.Dest = line[1]
+		s.Depart = line[2]
+		s.Arrive = line[3]
+		s.price,_ = strconv.Atoi(line[4])
+		
+		result = append(result,s)
+	}
+	log.Println(result)
+	return result 
+	
+} 
 
 
 

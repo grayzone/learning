@@ -33,7 +33,7 @@ func TestMovieLens() {
 	title := util.LoadMovieTitles()
 	d := util.LoadMovieData(title)
 	//	log.Println(d["87"])
-//	log.Println(util.GetRecommendations(d, "87", util.Sim_pearson)[:30])
+	//	log.Println(util.GetRecommendations(d, "87", util.Sim_pearson)[:30])
 
 	itemsim := util.CalculateSimilarItems(d, 50)
 
@@ -41,9 +41,15 @@ func TestMovieLens() {
 
 }
 
+func TestOptimization() {
+	util.InitOpt()
+	util.LoadScheduleData()
+}
+
 func main() {
 	//	TestdefaultDataset()
 
-	TestMovieLens()
+	// TestMovieLens()
+	TestOptimization()
 
 }

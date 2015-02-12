@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-func InitData() {
+func InitOpt() {
 	people := make(map[string]string)
 	people["Seymour"] = "BOS"
 	people["Franny"] = "DAL"
@@ -17,5 +17,8 @@ func InitData() {
 
 	log.Println(people)
 	log.Println(destination)
+	
 
 }
+
+
