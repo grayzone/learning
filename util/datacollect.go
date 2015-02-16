@@ -6,17 +6,9 @@ import (
 	"log"
 	"strings"
 	"strconv"
-
 )
 
-type Schedule struct {
-	Origin string
-	Dest string
-	Depart string
-	Arrive string
-	price int
-	
-}
+
 
 type MovieTitle map[string]string
 
@@ -91,7 +83,7 @@ func LoadMovieData(movie MovieTitle)Dataset{
 	return result
 }
 
-func LoadScheduleData()[]Schedule{
+func LoadScheduleData()Flight{
 	datafile := GetScheduleFilepath()
 	f,err := os.Open(datafile)
 	if err != nil{
@@ -99,25 +91,30 @@ func LoadScheduleData()[]Schedule{
 	}
 	defer f.Close()
 	
-	var result []Schedule
+	result := make(Flight)
 	r := bufio.NewScanner(f)
 	r.Split(bufio.ScanLines)
 	for r.Scan(){
 		line := strings.Split(r.Text(), ",")
 //		log.Println(s)
+
+		addr := line[0] + "-" + line[1]
+		
+		
 		var s Schedule
-		s.Origin = line[0]
-		s.Dest = line[1]
+//		s.Origin = line[0]
+//		s.Dest = line[1]
 		s.Depart = line[2]
 		s.Arrive = line[3]
-		s.price,_ = strconv.Atoi(line[4])
+		s.Price,_ = strconv.Atoi(line[4])
 		
-		result = append(result,s)
+		result[addr] = append(result[addr],s)
 	}
-	log.Println(result)
+//	log.Println(result)
 	return result 
-	
 } 
+
+
 
 
 
