@@ -46,7 +46,16 @@ func TestOptimization() {
 //	p,des := util.InitOpt()
 	plan := []int{1,4,3,2,7,3,6,3,2,4,5,3}
 	util.PrintSchedule(people,plan)
-	util.ScheduleCost(people,plan)
+	
+//	log.Println(util.ScheduleCost(people,plan))
+	
+	
+	util.RandomOptimize(people)
+	
+
+	
+	util.HillClimb(people)
+
 }
 
 func main() {
