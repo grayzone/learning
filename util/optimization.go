@@ -2,6 +2,7 @@ package util
 
 import (
 	"log"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -129,7 +130,7 @@ func RandomOptimize(p []Schedule) {
 
 }
 
-func HillClimb(p []Schedule) {
+func HillClimbOptimize(p []Schedule) {
 
 	var seed []int
 	rand.Seed(time.Now().UnixNano())
@@ -183,24 +184,79 @@ func HillClimb(p []Schedule) {
 			//		log.Printf("best cost : %d\n", best)
 			//			log.Printf("seed : %v\n", seed)
 			//			log.Printf("tmp : %v\n", tmp)
-			/*
-				if best == current {
-					log.Println("found")
-					break
-				}
-			*/
 		}
 
 		if best == current {
-//			log.Println("found")
+			//			log.Println("found")
 			break
 		}
-
-		//	var neighours []int
 
 	}
 
 	log.Println(best)
 	PrintSchedule(p, seed)
+
+}
+
+func AnnealingOptimize(p []Schedule) {
+
+	T := 100.0
+	cool := 0.95
+	step := 1
+
+	var seed []int
+	rand.Seed(time.Now().UnixNano())
+	for j := 0; j < len(p); j++ {
+		seed = append(seed, rand.Intn(10))
+		seed = append(seed, rand.Intn(10))
+	}
+
+	sol := make([]int, len(seed), (cap(seed)+1)*2)
+	copy(sol, seed)
+
+	for {
+
+		if T < 0.1 {
+			break
+		}
+
+//		log.Println(seed)
+
+		i := rand.Intn(12)
+		dir := rand.Intn(3) - step
+
+		current := make([]int, len(sol), (cap(sol)+1)*2)
+		copy(current, sol)
+		current[i] = current[i] + dir
+
+//		log.Println(i)
+//		log.Println(current)
+
+		if current[i] < 0 {
+			current[i] = seed[i]
+		} else if current[i] > 9 {
+			current[i] = seed[i]
+		}
+
+//		log.Println(current)
+
+		ea := ScheduleCost(p, sol)
+		eb := ScheduleCost(p, current)
+
+		p := math.Pow(math.E, -float64(ea+eb)/T)
+
+		log.Println(p)
+
+		if eb < ea {
+			sol = current
+			copy(sol, current)
+		}
+
+		T = T * cool
+
+	}
+	log.Println(sol)
+	log.Println(ScheduleCost(p, sol))
+	PrintSchedule(p, sol)
 
 }

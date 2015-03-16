@@ -51,10 +51,8 @@ func TestOptimization() {
 	
 	
 	util.RandomOptimize(people)
-	
-
-	
-	util.HillClimb(people)
+	util.HillClimbOptimize(people)
+	util.AnnealingOptimize(people)
 
 }
 
