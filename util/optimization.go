@@ -132,23 +132,22 @@ func RandomOptimize(p []Schedule) {
 func HillClimb(p []Schedule) {
 
 	var seed []int
+	rand.Seed(time.Now().UnixNano())
 	for j := 0; j < len(p); j++ {
 		seed = append(seed, rand.Intn(10))
 		seed = append(seed, rand.Intn(10))
 	}
 
-	best := 0
+	best := ScheduleCost(p, seed)
 
 	for {
 
-		current := ScheduleCost(p, seed)
-		best = current
-
+		current := best
+		tmp := seed
 		for index, t := range seed {
-			tmp := seed
 			cost := 0
-			log.Println(index)
-//			log.Println(seed)
+			//			log.Printf("index : %d, t : %d\n", index, t)
+			//			log.Println(seed)
 			if t == 0 {
 				tmp[index] = t + 1
 				cost = ScheduleCost(p, tmp)
@@ -180,12 +179,20 @@ func HillClimb(p []Schedule) {
 					seed[index] = tmp[index]
 				}
 			}
-			log.Println(current)
-			log.Println(cost)
-			log.Println(best)
+			//			log.Printf("current cost : %d\n", current)
+			//		log.Printf("best cost : %d\n", best)
+			//			log.Printf("seed : %v\n", seed)
+			//			log.Printf("tmp : %v\n", tmp)
+			/*
+				if best == current {
+					log.Println("found")
+					break
+				}
+			*/
 		}
 
 		if best == current {
+//			log.Println("found")
 			break
 		}
 
