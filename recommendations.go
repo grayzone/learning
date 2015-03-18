@@ -53,13 +53,31 @@ func TestOptimization() {
 	util.RandomOptimize(people)
 	util.HillClimbOptimize(people)
 	util.AnnealingOptimize(people)
+	util.GeneticOptimize(people)
 
+}
+
+func TestDorm(){
+	
+		student, dorms := util.DormInit()
+
+	for _, value := range dorms {
+		log.Println(value)
+	}
+	
+	log.Println(student)
+	
+	sol := []int{0,0,0,0,0,0,0,0,0,0}
+	
+	util.PrintSolution(student,dorms,sol)
+	
 }
 
 func main() {
 	//	TestdefaultDataset()
 
 	// TestMovieLens()
-	TestOptimization()
+//	TestOptimization()
 
+TestDorm()
 }

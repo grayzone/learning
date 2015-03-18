@@ -144,7 +144,9 @@ func HillClimbOptimize(p []Schedule) {
 	for {
 
 		current := best
-		tmp := seed
+		
+		tmp := make([]int, len(seed))
+		copy(tmp,seed)
 		for index, t := range seed {
 			cost := 0
 			//			log.Printf("index : %d, t : %d\n", index, t)
@@ -258,5 +260,8 @@ func AnnealingOptimize(p []Schedule) {
 	log.Println(sol)
 	log.Println(ScheduleCost(p, sol))
 	PrintSchedule(p, sol)
+}
 
+func GeneticOptimize(p []Schedule){
+	
 }
